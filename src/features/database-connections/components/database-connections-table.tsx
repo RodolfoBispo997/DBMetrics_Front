@@ -5,20 +5,23 @@ import { useDatabaseConnections } from "../hooks/use-database-connections";
 import { DatabaseConnectionsHeader } from "./database-connections-header";
 import { DatabaseConnectionsRow } from "./database-connections-row";
 import { Table, TableBody } from "@/components/ui/table";
+import { DatabaseConnectionsSkeleton } from "./database-connections-skeleton";
+import { DatabaseConnectionsEmpty } from "./database-connections-empty";
+import { DatabaseConnectionsError } from "./database-connections-error";
 
 export function DatabaseConnectionsTable() {
   const { data, isLoading, isError } = useDatabaseConnections();
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <DatabaseConnectionsSkeleton />;
   }
 
   if (isError) {
-    return <p>Failed to load database connections.</p>;
+    return <DatabaseConnectionsError />;
   }
 
   if (!data?.length) {
-    return <p>No database connections found.</p>;
+    return <DatabaseConnectionsEmpty />;
   }
 
   return (

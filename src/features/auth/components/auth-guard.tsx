@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { getToken } from "@/lib/token-storage";
@@ -12,25 +12,15 @@ type AuthGuardProps = {
 export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const token = getToken();
 
   useEffect(() => {
-    const token = getToken();
-
     if (!token) {
-      setIsAuthenticated(false);
       router.replace("/login");
-      return;
     }
+  }, [router, token]);
 
-    setIsAuthenticated(true);
-  }, [router]);
-
-  if (isAuthenticated === null) {
-    return null;
-  }
-
-  if (!isAuthenticated) {
+  if (!token) {
     return null;
   }
 

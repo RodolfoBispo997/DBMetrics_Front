@@ -12,8 +12,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { DatabaseConnection } from "../types/database-connection";
+
 import { useDeleteDatabaseConnection } from "../hooks/use-delete-database-connection";
+import { useTestDatabaseConnection } from "../hooks/use-test-database-connection";
+
 import { UpdateDatabaseConnectionDialog } from "./update-database-connection-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type DatabaseConnectionActionsProps = {
   connection: DatabaseConnection;
@@ -23,8 +36,10 @@ export function DatabaseConnectionsActions({
   connection,
 }: DatabaseConnectionActionsProps) {
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const deleteMutation = useDeleteDatabaseConnection();
+  const testMutation = useTestDatabaseConnection();
 
   return (
     <>
@@ -42,12 +57,17 @@ export function DatabaseConnectionsActions({
 
           <DropdownMenuItem
             className="text-red-500"
-            onClick={() => deleteMutation.mutate(connection.id)}
+            onClick={() => setOpenDeleteDialog(true)}
           >
             Delete
           </DropdownMenuItem>
 
-          <DropdownMenuItem>Test Connection</DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={testMutation.isPending}
+            onClick={() => testMutation.mutate(connection.id)}
+          >
+            {testMutation.isPending ? "Testing..." : "Test Connection"}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -56,6 +76,27 @@ export function DatabaseConnectionsActions({
         onOpenChange={setOpenEditDialog}
         connection={connection}
       />
+      <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete database connection?</AlertDialogTitle>
+
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+            <AlertDialogAction
+              onClick={() => deleteMutation.mutate(connection.id)}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

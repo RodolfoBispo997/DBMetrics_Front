@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { databaseConnectionsService } from "../services/database-connections.service";
-import { databaseConnectionKeys } from "../constants/query-keys";
+import { getErrorMessage } from "@/utils/get-error-message";
 
 export function useCreateDatabaseConnection() {
   const queryClient = useQueryClient();
@@ -9,10 +10,16 @@ export function useCreateDatabaseConnection() {
   return useMutation({
     mutationFn: databaseConnectionsService.create,
 
-    onSuccess: () => {
+    onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: databaseConnectionKeys.lists(),
+        queryKey: ["database-connections"],
       });
+
+      toast.success("Connection created successfully.");
+    },
+
+    onError(error) {
+      toast.error(getErrorMessage(error));
     },
   });
 }
