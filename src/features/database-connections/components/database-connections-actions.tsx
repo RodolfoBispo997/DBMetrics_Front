@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { MoreHorizontal } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,12 +9,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-
 import { DatabaseConnection } from "../types/database-connection";
-
 import { useDeleteDatabaseConnection } from "../hooks/use-delete-database-connection";
 import { useTestDatabaseConnection } from "../hooks/use-test-database-connection";
-
 import { UpdateDatabaseConnectionDialog } from "./update-database-connection-dialog";
 import {
   AlertDialog,
@@ -27,6 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 type DatabaseConnectionActionsProps = {
   connection: DatabaseConnection;
@@ -40,6 +37,7 @@ export function DatabaseConnectionsActions({
 
   const deleteMutation = useDeleteDatabaseConnection();
   const testMutation = useTestDatabaseConnection();
+  const router = useRouter();
 
   return (
     <>
@@ -67,6 +65,12 @@ export function DatabaseConnectionsActions({
             onClick={() => testMutation.mutate(connection.id)}
           >
             {testMutation.isPending ? "Testing..." : "Test Connection"}
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => router.push(`/metrics/${connection.id}`)}
+          >
+            View Metrics
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
