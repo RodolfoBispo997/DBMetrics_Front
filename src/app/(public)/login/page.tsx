@@ -1,6 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+import axios from "axios";
+import { toast } from "sonner";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,16 +15,19 @@ import {
   loginSchema,
 } from "@/features/auth/schemas/login.schema";
 import { isAuthenticated, saveToken } from "@/lib/token-storage";
-import { useEffect } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
 
+  // A rota pública verifica a existência da sessão apenas durante a montagem.
+  // Alterações posteriores na sessão são tratadas pela infraestrutura HTTP.
+  const authenticated = isAuthenticated();
+
   useEffect(() => {
-    if (isAuthenticated()) {
+    if (authenticated) {
       router.replace("/dashboard");
     }
-  }, [router]);
+  }, [authenticated, router]);
 
   const { mutate, isPending } = useLogin();
 
@@ -36,16 +43,37 @@ export default function LoginPage() {
     mutate(data, {
       onSuccess(response) {
         saveToken(response.accessToken);
-        router.push("/dashboard");
+
+        router.replace("/dashboard");
       },
 
       onError(error) {
-        console.error(error);
+        if (!axios.isAxiosError(error)) {
+          toast.error("Não foi possível realizar o login.");
+          return;
+        }
+
+        switch (error.response?.status) {
+          case 401:
+            toast.error("E-mail ou senha inválidos.");
+            break;
+
+          case 500:
+            toast.error("Erro interno do servidor.");
+            break;
+
+          default:
+            if (!error.response) {
+              toast.error("Não foi possível conectar ao servidor.");
+            } else {
+              toast.error("Não foi possível realizar o login.");
+            }
+        }
       },
     });
   }
 
-  if (isAuthenticated()) {
+  if (authenticated) {
     return null;
   }
 

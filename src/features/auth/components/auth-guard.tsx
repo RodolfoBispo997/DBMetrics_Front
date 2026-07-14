@@ -13,28 +13,25 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
 
   const [isReady, setIsReady] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    // A existência da sessão é verificada apenas na montagem do componente.
+    // A invalidação da sessão (expiração do JWT ou 401 Unauthorized)
+    // é responsabilidade da infraestrutura HTTP.
     const token = getToken();
 
     if (!token) {
       router.replace("/login");
-      setIsReady(true);
       return;
     }
 
-    setIsAuthenticated(true);
     setIsReady(true);
   }, [router]);
 
+  // TODO (Sprint 3): substituir por <PageLoader />.
   if (!isReady) {
     return null;
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  return children;
+  return <>{children}</>;
 }

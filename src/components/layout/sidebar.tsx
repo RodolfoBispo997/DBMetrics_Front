@@ -1,4 +1,29 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+import { cn } from "@/lib/utils";
+
+type NavigationItem = {
+  label: string;
+  href: string;
+};
+
+const navigationItems: NavigationItem[] = [
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+  },
+  {
+    label: "Database Connections",
+    href: "/database-connections",
+  },
+];
+
 export function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="w-64 border-r border-white/10 bg-[#0b1020] p-6">
       <div className="mb-8">
@@ -7,9 +32,27 @@ export function Sidebar() {
       </div>
 
       <nav className="space-y-2">
-        <div className="rounded-lg bg-white/5 px-3 py-2 text-sm text-white">
-          Dashboard
-        </div>
+        {navigationItems.map((item) => {
+          const isActive =
+            item.href === "/dashboard"
+              ? pathname === item.href
+              : pathname.startsWith(item.href);
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "block rounded-lg px-3 py-2 text-sm transition-colors",
+                isActive
+                  ? "bg-white/10 font-medium text-white"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white",
+              )}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
     </aside>
   );
