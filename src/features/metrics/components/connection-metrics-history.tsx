@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { useConnectionMetricsHistory } from "../hooks/use-connection-metrics-history";
 import { MetricsSkeleton } from "./metrics-skeleton";
 import { MetricsError } from "./metrics-error";
@@ -10,14 +13,41 @@ type ConnectionMetricsHistoryProps = Readonly<{
   connectionId: string;
 }>;
 
+const HISTORY_LIMIT = 20;
+const MAX_PAGE_BUTTONS = 5;
+
+function getPageNumbers(page: number, totalPages: number) {
+  if (totalPages <= MAX_PAGE_BUTTONS) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const half = Math.floor(MAX_PAGE_BUTTONS / 2);
+  let start = Math.max(1, page - half);
+  let end = start + MAX_PAGE_BUTTONS - 1;
+
+  if (end > totalPages) {
+    end = totalPages;
+    start = totalPages - MAX_PAGE_BUTTONS + 1;
+  }
+
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+}
+
 export function ConnectionMetricsHistory({ connectionId }: ConnectionMetricsHistoryProps) {
-  const HISTORY_LIMIT = 100;
-  const { data, isLoading, isError } = useConnectionMetricsHistory(connectionId, {
-    limit: HISTORY_LIMIT,
-  });
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isFetching, isError } = useConnectionMetricsHistory(
+    connectionId,
+    {
+      page,
+      limit: HISTORY_LIMIT,
+    },
+  );
 
   const historyItems = data?.history ?? [];
+  const totalPages = data?.pagination?.totalPages ?? 0;
+  const pageNumbers = getPageNumbers(page, totalPages);
   const isEmpty = !isLoading && !isError && historyItems.length === 0;
+  const isPageTransition = isFetching && !isLoading;
 
   return (
     <section aria-labelledby="metrics-history-heading" className="space-y-4">
@@ -74,6 +104,50 @@ export function ConnectionMetricsHistory({ connectionId }: ConnectionMetricsHist
               ))}
             </tbody>
           </table>
+
+          {totalPages > 0 ? (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-foreground"
+                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                disabled={page <= 1 || isPageTransition}
+                aria-label="Previous page"
+              >
+                Previous
+              </Button>
+
+              {pageNumbers.map((pageNumber) => (
+                <Button
+                  key={pageNumber}
+                  variant={pageNumber === page ? "secondary" : "outline"}
+                  size="sm"
+                  className="text-foreground"
+                  onClick={() => setPage(pageNumber)}
+                  disabled={pageNumber === page || isPageTransition}
+                  aria-current={pageNumber === page ? "page" : undefined}
+                >
+                  {pageNumber}
+                </Button>
+              ))}
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-foreground"
+                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={page >= totalPages || isPageTransition}
+                aria-label="Next page"
+              >
+                Next
+              </Button>
+
+              {isPageTransition ? (
+                <p className="text-sm text-muted-foreground">Loading page...</p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       )}
     </section>

@@ -59,9 +59,17 @@ export type ConnectionMetricsHistoryItem = {
   collectedAt: string;
 };
 
+export type ConnectionMetricsPagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
 export type ConnectionMetricsHistoryResponse = {
   connectionId: string;
   history: ConnectionMetricsHistoryItem[];
+  pagination: ConnectionMetricsPagination;
 };
 
 export type ConnectionMetricsChartParams = {
@@ -72,5 +80,6 @@ export type ConnectionMetricsChartParams = {
 export type ConnectionMetricsHistoryParams = {
   startDate?: string;
   endDate?: string;
+  page?: number;
   limit?: number;
 };
