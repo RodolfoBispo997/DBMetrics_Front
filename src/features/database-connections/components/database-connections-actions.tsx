@@ -23,6 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type DatabaseConnectionActionsProps = {
@@ -71,6 +72,12 @@ export function DatabaseConnectionsActions({
             onClick={() => router.push(`/metrics/${connection.id}`)}
           >
             View Metrics
+          </DropdownMenuItem>
+
+          <DropdownMenuItem asChild>
+            <Link href={`/database-connections/${connection.id}`}>
+              View Details
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
