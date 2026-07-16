@@ -16,8 +16,11 @@ function renderGrowthLabel(value: number): string {
   return `24h: ${value >= 0 ? "+" : ""}${formattedValue}`;
 }
 
-export function ConnectionMetricsSummary({ connectionId }: ConnectionMetricsSummaryProps) {
-  const { data, isLoading, isError } = useConnectionMetricsSummary(connectionId);
+export function ConnectionMetricsSummary({
+  connectionId,
+}: ConnectionMetricsSummaryProps) {
+  const { data, isLoading, isError } =
+    useConnectionMetricsSummary(connectionId);
 
   if (isLoading) {
     return <MetricsSkeleton />;
@@ -33,7 +36,9 @@ export function ConnectionMetricsSummary({ connectionId }: ConnectionMetricsSumm
         <h2 className="text-sm font-medium text-muted-foreground">
           Metrics Summary
         </h2>
-        <p className="mt-3 text-base text-foreground">No metrics collected yet.</p>
+        <p className="mt-3 text-base text-foreground">
+          No metrics collected in the last 24 hours.
+        </p>
       </div>
     );
   }
