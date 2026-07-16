@@ -26,15 +26,21 @@ export function ConnectionDetails({ connectionId }: ConnectionDetailsProps) {
       />
 
       {isLoading ? (
-        <div>Loading connection details...</div>
+        <div className="rounded-lg border border-border bg-background p-6 shadow-sm">
+          <p className="text-base text-foreground">Loading connection details...</p>
+        </div>
       ) : isError ? (
-        <div>
-          {isNotFound
-            ? "Connection not found."
-            : "Unable to load connection details."}
+        <div className="rounded-lg border border-border bg-background p-6 shadow-sm">
+          <p className="text-base text-foreground">
+            {isNotFound
+              ? "Connection not found."
+              : "Unable to load connection details."}
+          </p>
         </div>
       ) : !data ? (
-        <div>No connection data found.</div>
+        <div className="rounded-lg border border-border bg-background p-6 shadow-sm">
+          <p className="text-base text-foreground">No connection data found.</p>
+        </div>
       ) : (
         <div className="space-y-6">
           <div className="rounded-lg border border-border bg-background p-6 shadow-sm">

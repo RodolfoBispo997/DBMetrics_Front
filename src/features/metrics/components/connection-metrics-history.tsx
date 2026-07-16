@@ -99,7 +99,11 @@ export function ConnectionMetricsHistory({ connectionId }: ConnectionMetricsHist
                   <td className="whitespace-nowrap px-4 py-3">{item.schemasCount}</td>
                   <td className="whitespace-nowrap px-4 py-3">{item.indexesCount}</td>
                   <td className="whitespace-nowrap px-4 py-3">{item.functionsCount}</td>
-                  <td className="whitespace-nowrap px-4 py-3">{item.databaseVersion}</td>
+                  <td className="px-4 py-3" title={item.databaseVersion}>
+                    <span className="block max-w-[16rem] truncate">
+                      {item.databaseVersion}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -124,9 +128,10 @@ export function ConnectionMetricsHistory({ connectionId }: ConnectionMetricsHist
                   variant={pageNumber === page ? "secondary" : "outline"}
                   size="sm"
                   className="text-foreground"
-                  onClick={() => setPage(pageNumber)}
-                  disabled={pageNumber === page || isPageTransition}
+                  onClick={() => pageNumber !== page && setPage(pageNumber)}
+                  disabled={isPageTransition}
                   aria-current={pageNumber === page ? "page" : undefined}
+                  aria-label={`Page ${pageNumber}`}
                 >
                   {pageNumber}
                 </Button>

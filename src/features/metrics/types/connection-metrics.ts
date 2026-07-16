@@ -1,5 +1,3 @@
-// Exact types for the frozen backend contracts for Connection Details
-
 export type ConnectionMetricSnapshot = {
   databaseVersion: string;
   tablesCount: number;
