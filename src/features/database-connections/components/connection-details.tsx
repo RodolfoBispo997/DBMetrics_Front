@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDatabaseConnection } from "../hooks/use-database-connection";
 import { PageHeader } from "@/components/page/page-header";
 import { ConnectionMetricsSummary } from "@/features/metrics/components/connection-metrics-summary";
+import { ConnectionMetricsChart } from "@/features/metrics/components/connection-metrics-chart";
 
 type ConnectionDetailsProps = Readonly<{
   connectionId: string;
@@ -89,6 +90,7 @@ export function ConnectionDetails({ connectionId }: ConnectionDetailsProps) {
           </div>
 
           <ConnectionMetricsSummary connectionId={connectionId} />
+          <ConnectionMetricsChart connectionId={connectionId} />
         </div>
       )}
     </div>
