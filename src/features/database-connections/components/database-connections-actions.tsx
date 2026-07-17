@@ -24,7 +24,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 type DatabaseConnectionActionsProps = {
   connection: DatabaseConnection;
@@ -38,7 +37,6 @@ export function DatabaseConnectionsActions({
 
   const deleteMutation = useDeleteDatabaseConnection();
   const testMutation = useTestDatabaseConnection();
-  const router = useRouter();
 
   return (
     <>
@@ -66,12 +64,6 @@ export function DatabaseConnectionsActions({
             onClick={() => testMutation.mutate(connection.id)}
           >
             {testMutation.isPending ? "Testing..." : "Test Connection"}
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => router.push(`/metrics/${connection.id}`)}
-          >
-            View Metrics
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
