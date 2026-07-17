@@ -26,7 +26,14 @@ export interface DashboardConnection {
   name: string;
   provider: string;
   database: string;
-  lastMetric: DashboardConnectionMetric;
+  lastMetric: DashboardConnectionMetric | null;
+  health:
+    | {
+        status: "ONLINE" | "WARNING" | "CRITICAL";
+        message: string;
+        checkedAt: string;
+      }
+    | null;
 }
 
 export interface DashboardOverviewResponse {

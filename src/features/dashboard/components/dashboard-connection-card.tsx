@@ -36,7 +36,7 @@ export function DashboardConnectionCard({
           </dt>
 
           <dd className="mt-1 text-sm text-white">
-            {connection.lastMetric.databaseVersion}
+            {connection.lastMetric?.databaseVersion ?? "N/A"}
           </dd>
         </div>
 
@@ -46,7 +46,9 @@ export function DashboardConnectionCard({
           </dt>
 
           <dd className="mt-1 text-sm text-white">
-            {formatBytes(connection.lastMetric.databaseSize)}
+            {connection.lastMetric
+              ? formatBytes(connection.lastMetric.databaseSize)
+              : "N/A"}
           </dd>
         </div>
 
@@ -56,7 +58,7 @@ export function DashboardConnectionCard({
           </dt>
 
           <dd className="mt-1 text-sm text-white">
-            {connection.lastMetric.activeConnections}
+            {connection.lastMetric?.activeConnections ?? "N/A"}
           </dd>
         </div>
 
@@ -66,7 +68,9 @@ export function DashboardConnectionCard({
           </dt>
 
           <dd className="mt-1 text-sm text-white">
-            {formatDate(connection.lastMetric.collectedAt)}
+            {connection.lastMetric
+              ? formatDate(connection.lastMetric.collectedAt)
+              : "N/A"}
           </dd>
         </div>
       </dl>

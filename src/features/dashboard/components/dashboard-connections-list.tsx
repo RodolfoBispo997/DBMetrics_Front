@@ -18,7 +18,7 @@ export function DashboardConnectionsList({
   }
 
   return (
-    <div className="space-y-4" role="list">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3" role="list">
       {connections.map((connection) => (
         <DashboardConnectionCard
           key={connection.connectionId}
