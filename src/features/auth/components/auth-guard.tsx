@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 import { getToken } from "@/lib/token-storage";
@@ -9,27 +9,32 @@ type AuthGuardProps = {
   children: ReactNode;
 };
 
+function subscribe() {
+  return () => {};
+}
+
 export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
 
-  const [isReady, setIsReady] = useState(false);
+  const isClient = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
+
+  const hasToken = isClient && Boolean(getToken());
 
   useEffect(() => {
-    // A existência da sessão é verificada apenas na montagem do componente.
-    // A invalidação da sessão (expiração do JWT ou 401 Unauthorized)
-    // é responsabilidade da infraestrutura HTTP.
-    const token = getToken();
-
-    if (!token) {
+    // A existência da sessão é verificada após a hidratação.
+    // A invalidação por expiração do JWT ou resposta 401
+    // permanece sob responsabilidade da infraestrutura HTTP.
+    if (isClient && !hasToken) {
       router.replace("/login");
-      return;
     }
+  }, [hasToken, isClient, router]);
 
-    setIsReady(true);
-  }, [router]);
-
-  // TODO (Sprint 3): substituir por <PageLoader />.
-  if (!isReady) {
+  // TODO: substituir por <PageLoader />.
+  if (!isClient || !hasToken) {
     return null;
   }
 
