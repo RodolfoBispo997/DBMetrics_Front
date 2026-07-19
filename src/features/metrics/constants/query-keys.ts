@@ -1,7 +1,5 @@
 export const metricsKeys = {
   all: ["metrics"] as const,
-  detail: (connectionId: string) => [...metricsKeys.all, connectionId] as const,
-
   summary: (connectionId: string) => [...metricsKeys.all, "summary", connectionId] as const,
 
   chart: (connectionId: string, params?: unknown) =>
