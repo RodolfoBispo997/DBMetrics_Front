@@ -2,22 +2,31 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Bell, Database, LayoutDashboard, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 type NavigationItem = {
   label: string;
   href: string;
+  icon?: LucideIcon;
 };
 
 const navigationItems: NavigationItem[] = [
   {
     label: "Dashboard",
     href: "/dashboard",
+    icon: LayoutDashboard,
   },
   {
     label: "Database Connections",
     href: "/database-connections",
+    icon: Database,
+  },
+  {
+    label: "Alerts",
+    href: "/alerts",
+    icon: Bell,
   },
 ];
 
@@ -33,6 +42,7 @@ export function Sidebar() {
 
       <nav className="space-y-2">
         {navigationItems.map((item) => {
+          const Icon = item.icon;
           const isActive =
             item.href === "/dashboard"
               ? pathname === item.href
@@ -49,6 +59,7 @@ export function Sidebar() {
                   : "text-slate-400 hover:bg-white/5 hover:text-white",
               )}
             >
+              {Icon && <Icon className="mr-2 inline-block size-4" />}
               {item.label}
             </Link>
           );
