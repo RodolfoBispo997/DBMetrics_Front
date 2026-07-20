@@ -28,6 +28,16 @@ export type CreateAlertRuleInput = {
   destination: string;
 };
 
+export type UpdateAlertRuleInput = {
+  alertRuleId: string;
+  databaseConnectionId: string;
+  metric: AlertMetric;
+  operator: AlertOperator;
+  threshold: number;
+  channel: "WHATSAPP";
+  destination: string;
+};
+
 export type AlertRule = {
   id: string;
   databaseConnectionId: string;

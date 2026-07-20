@@ -1,6 +1,11 @@
 import { api } from "@/lib/api";
 
-import { AlertExecution, AlertRule, CreateAlertRuleInput } from "../types/alert";
+import {
+  AlertExecution,
+  AlertRule,
+  CreateAlertRuleInput,
+  UpdateAlertRuleInput,
+} from "../types/alert";
 
 export const alertsService = {
   async getRule(alertRuleId: string): Promise<AlertRule> {
@@ -19,6 +24,21 @@ export const alertsService = {
 
   async createRule(input: CreateAlertRuleInput): Promise<AlertRule> {
     const response = await api.post<AlertRule>("/alerts", input);
+
+    return response.data;
+  },
+
+  async updateRule(
+    alertRuleId: string,
+    input: UpdateAlertRuleInput,
+  ): Promise<AlertRule> {
+    const response = await api.patch<AlertRule>(`/alerts/${alertRuleId}`, {
+      metric: input.metric,
+      operator: input.operator,
+      threshold: input.threshold,
+      channel: input.channel,
+      destination: input.destination,
+    });
 
     return response.data;
   },

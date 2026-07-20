@@ -93,6 +93,7 @@ function RulesList({ connectionId }: { connectionId: string }) {
               <TableHead>Channel</TableHead>
               <TableHead>Destination</TableHead>
               <TableHead>Enabled</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
 

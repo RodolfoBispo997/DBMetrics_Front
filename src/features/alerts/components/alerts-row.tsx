@@ -1,11 +1,16 @@
 "use client";
 
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertRule } from "@/features/alerts/types/alert";
 import { alertMetricLabels, alertOperatorLabels } from "../constants/alert-options";
+import { UpdateAlertRuleDialog } from "./update-alert-rule-dialog";
 
 export function AlertsRow({ rule }: { rule: AlertRule }) {
+  const [openEditDialog, setOpenEditDialog] = useState(false);
   const op = alertOperatorLabels[rule.operator];
   const metric = alertMetricLabels[rule.metric];
   const channel = rule.channel === "WHATSAPP" ? "WhatsApp" : rule.channel;
@@ -21,6 +26,12 @@ export function AlertsRow({ rule }: { rule: AlertRule }) {
         <Badge variant={rule.enabled ? "default" : "secondary"}>
           {rule.enabled ? "Yes" : "No"}
         </Badge>
+      </TableCell>
+      <TableCell>
+        <Button variant="ghost" size="sm" onClick={() => setOpenEditDialog(true)}>
+          Edit
+        </Button>
+        <UpdateAlertRuleDialog open={openEditDialog} onOpenChange={setOpenEditDialog} rule={rule} />
       </TableCell>
     </TableRow>
   );
