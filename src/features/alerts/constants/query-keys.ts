@@ -13,8 +13,11 @@ export const alertKeys = {
 
   executions: () => [...alertKeys.all, "executions"] as const,
 
-  executionsByConnection: (connectionId: string) =>
-    [...alertKeys.executions(), "connection", connectionId] as const,
+  executionsByConnection: (
+    connectionId: string,
+    page: number,
+    pageSize: number,
+  ) => [...alertKeys.executions(), "connection", connectionId, page, pageSize] as const,
 
   executionDetails: () => [...alertKeys.executions(), "detail"] as const,
 

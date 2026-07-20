@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -33,12 +36,23 @@ const statusVariants: Record<AlertExecutionStatus, "default" | "secondary" | "de
   FAILED: "destructive",
 };
 
+const PAGE_SIZE = 10;
+
 export function AlertExecutionsSection({ connectionId }: Props) {
-  const { data, isLoading, isError } = useAlertExecutions(connectionId);
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isFetching, isError } = useAlertExecutions(
+    connectionId,
+    page,
+    PAGE_SIZE,
+  );
+  const executions = data?.data ?? [];
+  const totalPages = data?.meta.totalPages ?? 0;
+  const currentPage = data?.meta.page ?? page;
+  const isPageTransition = isFetching && !isLoading;
 
   if (isLoading) return <AlertExecutionsSkeleton />;
   if (isError) return <AlertExecutionsError />;
-  if (!data || data.length === 0) return <AlertExecutionsEmpty />;
+  if (!data || executions.length === 0) return <AlertExecutionsEmpty />;
 
   return (
     <Card className="overflow-hidden">
@@ -58,12 +72,37 @@ export function AlertExecutionsSection({ connectionId }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((execution) => (
+            {executions.map((execution) => (
               <AlertExecutionRow key={execution.id} execution={execution} />
             ))}
           </TableBody>
         </Table>
       </div>
+      {totalPages > 0 && (
+        <div className="flex items-center justify-between gap-4 border-t p-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage <= 1 || isPageTransition}
+            aria-label="Previous page"
+          >
+            Previous
+          </Button>
+          <p className="text-sm text-muted-foreground" aria-live="polite">
+            Page {currentPage} of {totalPages}{isPageTransition ? " · Loading..." : ""}
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage >= totalPages || isPageTransition}
+            aria-label="Next page"
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </Card>
   );
 }

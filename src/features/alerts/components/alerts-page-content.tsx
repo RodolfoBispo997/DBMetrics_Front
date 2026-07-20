@@ -56,7 +56,10 @@ export function AlertsPageContent() {
           </h2>
         </header>
 
-        <AlertExecutionsSection connectionId={effectiveConnectionId} />
+        <AlertExecutionsSection
+          key={effectiveConnectionId}
+          connectionId={effectiveConnectionId}
+        />
       </section>
     </div>
   );

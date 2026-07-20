@@ -2,6 +2,7 @@ import { api } from "@/lib/api";
 
 import {
   AlertExecution,
+  PaginatedAlertExecutions,
   AlertRule,
   CreateAlertRuleInput,
   UpdateAlertRuleInput,
@@ -67,9 +68,14 @@ export const alertsService = {
     return response.data;
   },
 
-  async listExecutions(connectionId: string): Promise<AlertExecution[]> {
-    const response = await api.get<AlertExecution[]>(
+  async listExecutions(
+    connectionId: string,
+    page: number,
+    pageSize: number,
+  ): Promise<PaginatedAlertExecutions> {
+    const response = await api.get<PaginatedAlertExecutions>(
       `/alerts/connection/${connectionId}/executions`,
+      { params: { page, pageSize } },
     );
 
     return response.data;

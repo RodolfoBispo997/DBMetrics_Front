@@ -82,3 +82,15 @@ export type AlertExecution = {
   triggeredAt: string;
   sentAt: string | null;
 };
+
+export type AlertExecutionsPaginationMeta = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
+export type PaginatedAlertExecutions = {
+  data: AlertExecution[];
+  meta: AlertExecutionsPaginationMeta;
+};
