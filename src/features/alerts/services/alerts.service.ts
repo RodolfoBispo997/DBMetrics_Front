@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
 
-import { AlertExecution, AlertRule } from "../types/alert";
+import { AlertExecution, AlertRule, CreateAlertRuleInput } from "../types/alert";
 
 export const alertsService = {
   async getRule(alertRuleId: string): Promise<AlertRule> {
@@ -13,6 +13,12 @@ export const alertsService = {
     const response = await api.get<AlertRule[]>(
       `/alerts/connection/${connectionId}`,
     );
+
+    return response.data;
+  },
+
+  async createRule(input: CreateAlertRuleInput): Promise<AlertRule> {
+    const response = await api.post<AlertRule>("/alerts", input);
 
     return response.data;
   },

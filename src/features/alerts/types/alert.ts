@@ -19,6 +19,15 @@ export type AlertExecutionStatus = "PENDING" | "SENT" | "FAILED";
 
 export type NotificationChannel = "WHATSAPP";
 
+export type CreateAlertRuleInput = {
+  connectionId: string;
+  metric: AlertMetric;
+  operator: AlertOperator;
+  threshold: number;
+  channel: "WHATSAPP";
+  destination: string;
+};
+
 export type AlertRule = {
   id: string;
   databaseConnectionId: string;

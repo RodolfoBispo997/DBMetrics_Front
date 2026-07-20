@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
+import { DatabaseConnection } from "@/features/database-connections/types/database-connection";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -18,10 +17,6 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-import { useDatabaseConnections } from "@/features/database-connections/hooks/use-database-connections";
-import { AlertsConnectionsLoading } from "./alerts-connections-loading";
-import { AlertsConnectionsError } from "./alerts-connections-error";
-import { AlertsNoConnections } from "./alerts-no-connections";
 import { useAlertRules } from "@/features/alerts";
 import { AlertRule } from "@/features/alerts/types/alert";
 import { AlertsSkeleton } from "./alerts-skeleton";
@@ -29,20 +24,19 @@ import { AlertsError } from "./alerts-error";
 import { AlertsEmpty } from "./alerts-empty";
 import { AlertsRow } from "./alerts-row";
 
-export function AlertsTable() {
-  const {
-    data: connections,
-    isLoading: isLoadingConnections,
-    isError: isErrorConnections,
-  } = useDatabaseConnections();
+type Props = {
+  connections: DatabaseConnection[];
+  selectedConnectionId: string;
+  onSelectedConnectionIdChange: (connectionId: string) => void;
+};
 
-  const [selectedConnectionId, setSelectedConnectionId] = useState<string>("");
+export function AlertsTable({
+  connections,
+  selectedConnectionId,
+  onSelectedConnectionIdChange,
+}: Props) {
   const effectiveConnectionId =
-    selectedConnectionId || (connections && connections[0]?.id) || "";
-
-  if (isLoadingConnections) return <AlertsConnectionsLoading />;
-  if (isErrorConnections) return <AlertsConnectionsError />;
-  if (!connections || connections.length === 0) return <AlertsNoConnections />;
+    selectedConnectionId || connections[0]?.id || "";
 
   return (
     <div className="space-y-4">
@@ -56,7 +50,7 @@ export function AlertsTable() {
           </label>
           <Select
             value={effectiveConnectionId}
-            onValueChange={setSelectedConnectionId}
+            onValueChange={onSelectedConnectionIdChange}
           >
             <SelectTrigger
               id="alerts-connection-select"

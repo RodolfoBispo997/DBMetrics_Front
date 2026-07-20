@@ -3,29 +3,11 @@
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertRule } from "@/features/alerts/types/alert";
-
-const operatorLabel: Record<string, string> = {
-  GREATER_THAN: ">",
-  GREATER_THAN_OR_EQUAL: ">=",
-  LESS_THAN: "<",
-  LESS_THAN_OR_EQUAL: "<=",
-  EQUAL: "=",
-  NOT_EQUAL: "!=",
-};
-
-const metricLabel: Record<string, string> = {
-  DATABASE_SIZE: "Database Size",
-  ACTIVE_CONNECTIONS: "Active Connections",
-  TABLES_COUNT: "Tables Count",
-  VIEWS_COUNT: "Views Count",
-  SCHEMAS_COUNT: "Schemas Count",
-  INDEXES_COUNT: "Indexes Count",
-  FUNCTIONS_COUNT: "Functions Count",
-};
+import { alertMetricLabels, alertOperatorLabels } from "../constants/alert-options";
 
 export function AlertsRow({ rule }: { rule: AlertRule }) {
-  const op = operatorLabel[rule.operator] || rule.operator;
-  const metric = metricLabel[rule.metric] || rule.metric;
+  const op = alertOperatorLabels[rule.operator];
+  const metric = alertMetricLabels[rule.metric];
   const channel = rule.channel === "WHATSAPP" ? "WhatsApp" : rule.channel;
 
   return (
