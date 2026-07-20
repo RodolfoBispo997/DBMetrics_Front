@@ -9,6 +9,7 @@ import { useDatabaseConnections } from "@/features/database-connections/hooks/us
 import { AlertsConnectionsLoading } from "./alerts-connections-loading";
 import { AlertsConnectionsError } from "./alerts-connections-error";
 import { AlertsNoConnections } from "./alerts-no-connections";
+import { AlertExecutionsSection } from "./alert-executions-section";
 
 export function AlertsPageContent() {
   const {
@@ -46,6 +47,16 @@ export function AlertsPageContent() {
           selectedConnectionId={selectedConnectionId}
           onSelectedConnectionIdChange={setSelectedConnectionId}
         />
+      </section>
+
+      <section aria-labelledby="alert-executions" className="space-y-4">
+        <header>
+          <h2 id="alert-executions" className="text-lg font-semibold text-white">
+            Execution History
+          </h2>
+        </header>
+
+        <AlertExecutionsSection connectionId={effectiveConnectionId} />
       </section>
     </div>
   );

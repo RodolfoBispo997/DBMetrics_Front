@@ -1,4 +1,8 @@
-import { AlertMetric, AlertOperator } from "../types/alert";
+import {
+  AlertExecutionStatus,
+  AlertMetric,
+  AlertOperator,
+} from "../types/alert";
 
 export const alertMetricLabels: Record<AlertMetric, string> = {
   DATABASE_SIZE: "Database Size",
@@ -17,4 +21,10 @@ export const alertOperatorLabels: Record<AlertOperator, string> = {
   LESS_THAN_OR_EQUAL: "<=",
   EQUAL: "=",
   NOT_EQUAL: "!=",
+};
+
+export const alertExecutionStatusLabels: Record<AlertExecutionStatus, string> = {
+  PENDING: "Pending",
+  SENT: "Sent",
+  FAILED: "Failed",
 };

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { formatBytes } from "@/features/dashboard/utils/format-bytes";
-import { formatDate } from "@/features/dashboard/utils/format-date";
+import { formatDate } from "@/utils/format-date";
 
 import { DashboardConnection } from "@/features/dashboard/types/dashboard";
 
