@@ -43,6 +43,18 @@ export const alertsService = {
     return response.data;
   },
 
+  async enableRule(alertRuleId: string): Promise<AlertRule> {
+    const response = await api.patch<AlertRule>(`/alerts/${alertRuleId}/enable`);
+
+    return response.data;
+  },
+
+  async disableRule(alertRuleId: string): Promise<AlertRule> {
+    const response = await api.patch<AlertRule>(`/alerts/${alertRuleId}/disable`);
+
+    return response.data;
+  },
+
   async getExecution(executionId: string): Promise<AlertExecution> {
     const response = await api.get<AlertExecution>(
       `/alerts/executions/${executionId}`,

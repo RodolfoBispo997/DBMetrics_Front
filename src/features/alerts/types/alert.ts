@@ -38,6 +38,11 @@ export type UpdateAlertRuleInput = {
   destination: string;
 };
 
+export type AlertRuleStatusInput = {
+  alertRuleId: string;
+  databaseConnectionId: string;
+};
+
 export type AlertRule = {
   id: string;
   databaseConnectionId: string;
