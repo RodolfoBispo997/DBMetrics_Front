@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertRule } from "@/features/alerts/types/alert";
 import { alertMetricLabels, alertOperatorLabels } from "../constants/alert-options";
 import { AlertStatusToggle } from "./alert-status-toggle";
+import { DeleteAlertRuleDialog } from "./delete-alert-rule-dialog";
 import { UpdateAlertRuleDialog } from "./update-alert-rule-dialog";
 
 export function AlertsRow({ rule }: { rule: AlertRule }) {
@@ -33,6 +34,7 @@ export function AlertsRow({ rule }: { rule: AlertRule }) {
           Edit
         </Button>
         <AlertStatusToggle rule={rule} />
+        <DeleteAlertRuleDialog rule={rule} />
         <UpdateAlertRuleDialog open={openEditDialog} onOpenChange={setOpenEditDialog} rule={rule} />
       </TableCell>
     </TableRow>

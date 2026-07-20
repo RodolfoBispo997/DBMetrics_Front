@@ -55,6 +55,10 @@ export const alertsService = {
     return response.data;
   },
 
+  async deleteRule(alertRuleId: string): Promise<void> {
+    await api.delete(`/alerts/${alertRuleId}`);
+  },
+
   async getExecution(executionId: string): Promise<AlertExecution> {
     const response = await api.get<AlertExecution>(
       `/alerts/executions/${executionId}`,

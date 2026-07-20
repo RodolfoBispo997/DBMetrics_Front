@@ -43,6 +43,11 @@ export type AlertRuleStatusInput = {
   databaseConnectionId: string;
 };
 
+export type DeleteAlertRuleInput = {
+  alertRuleId: string;
+  databaseConnectionId: string;
+};
+
 export type AlertRule = {
   id: string;
   databaseConnectionId: string;
