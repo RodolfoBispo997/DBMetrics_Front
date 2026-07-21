@@ -50,6 +50,11 @@ export function AlertExecutionsSection({ connectionId }: Props) {
   const currentPage = data?.meta.page ?? page;
   const isPageTransition = isFetching && !isLoading;
 
+  if (data && totalPages > 0 && page > totalPages) {
+    setPage(totalPages);
+    return <AlertExecutionsSkeleton />;
+  }
+
   if (isLoading) return <AlertExecutionsSkeleton />;
   if (isError) return <AlertExecutionsError />;
   if (!data || executions.length === 0) return <AlertExecutionsEmpty />;

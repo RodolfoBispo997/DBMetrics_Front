@@ -14,15 +14,10 @@ export function useDisableAlertRule() {
     mutationFn: (input: AlertRuleStatusInput) =>
       alertsService.disableRule(input.alertRuleId),
 
-    onSuccess(data, variables) {
+    onSuccess(_, variables) {
       queryClient.invalidateQueries({
         queryKey: alertKeys.rulesByConnection(variables.databaseConnectionId),
       });
-      queryClient.setQueryData(
-        alertKeys.ruleDetail(variables.alertRuleId),
-        data,
-      );
-
       toast.success("Alert rule disabled successfully.");
     },
 

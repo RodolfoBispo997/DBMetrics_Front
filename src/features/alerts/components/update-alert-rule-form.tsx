@@ -16,7 +16,7 @@ import {
 
 import { alertMetricLabels, alertOperatorLabels } from "../constants/alert-options";
 import { useUpdateAlertRule } from "../hooks/use-update-alert-rule";
-import { CreateAlertRuleFormData, createAlertRuleSchema } from "../schemas/create-alert-rule.schema";
+import { AlertRuleFormData, alertRuleFormSchema } from "../schemas/alert-rule-form.schema";
 import { AlertRule } from "../types/alert";
 
 type Props = {
@@ -25,8 +25,8 @@ type Props = {
 };
 
 export function UpdateAlertRuleForm({ rule, onSuccess }: Props) {
-  const form = useForm<CreateAlertRuleFormData>({
-    resolver: zodResolver(createAlertRuleSchema),
+  const form = useForm<AlertRuleFormData>({
+    resolver: zodResolver(alertRuleFormSchema),
     defaultValues: {
       metric: rule.metric,
       operator: rule.operator,
@@ -36,7 +36,7 @@ export function UpdateAlertRuleForm({ rule, onSuccess }: Props) {
   });
   const mutation = useUpdateAlertRule();
 
-  function onSubmit(data: CreateAlertRuleFormData) {
+  function onSubmit(data: AlertRuleFormData) {
     mutation.mutate(
       {
         alertRuleId: rule.id,
@@ -54,34 +54,34 @@ export function UpdateAlertRuleForm({ rule, onSuccess }: Props) {
         <Label htmlFor="edit-alert-metric">Metric</Label>
         <Controller control={form.control} name="metric" render={({ field }) => (
           <Select value={field.value} onValueChange={field.onChange} disabled={mutation.isPending}>
-            <SelectTrigger id="edit-alert-metric" className="w-full"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="edit-alert-metric" className="w-full" aria-describedby={form.formState.errors.metric ? "edit-alert-metric-error" : undefined} aria-invalid={!!form.formState.errors.metric}><SelectValue /></SelectTrigger>
             <SelectContent>{Object.entries(alertMetricLabels).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
           </Select>
         )} />
-        {form.formState.errors.metric && <p className="text-sm text-red-500">{form.formState.errors.metric.message}</p>}
+        {form.formState.errors.metric && <p id="edit-alert-metric-error" className="text-sm text-red-500" aria-live="polite">{form.formState.errors.metric.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="edit-alert-operator">Operator</Label>
         <Controller control={form.control} name="operator" render={({ field }) => (
           <Select value={field.value} onValueChange={field.onChange} disabled={mutation.isPending}>
-            <SelectTrigger id="edit-alert-operator" className="w-full"><SelectValue /></SelectTrigger>
+            <SelectTrigger id="edit-alert-operator" className="w-full" aria-describedby={form.formState.errors.operator ? "edit-alert-operator-error" : undefined} aria-invalid={!!form.formState.errors.operator}><SelectValue /></SelectTrigger>
             <SelectContent>{Object.entries(alertOperatorLabels).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
           </Select>
         )} />
-        {form.formState.errors.operator && <p className="text-sm text-red-500">{form.formState.errors.operator.message}</p>}
+        {form.formState.errors.operator && <p id="edit-alert-operator-error" className="text-sm text-red-500" aria-live="polite">{form.formState.errors.operator.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="edit-alert-threshold">Threshold</Label>
-        <Input id="edit-alert-threshold" type="number" min="0" step="any" disabled={mutation.isPending} {...form.register("threshold", { valueAsNumber: true })} />
-        {form.formState.errors.threshold && <p className="text-sm text-red-500">{form.formState.errors.threshold.message}</p>}
+        <Input id="edit-alert-threshold" type="number" min="0" step="any" disabled={mutation.isPending} aria-describedby={form.formState.errors.threshold ? "edit-alert-threshold-error" : undefined} aria-invalid={!!form.formState.errors.threshold} {...form.register("threshold", { valueAsNumber: true })} />
+        {form.formState.errors.threshold && <p id="edit-alert-threshold-error" className="text-sm text-red-500" aria-live="polite">{form.formState.errors.threshold.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="edit-alert-destination">WhatsApp destination</Label>
-        <Input id="edit-alert-destination" inputMode="numeric" disabled={mutation.isPending} {...form.register("destination")} />
-        {form.formState.errors.destination && <p className="text-sm text-red-500">{form.formState.errors.destination.message}</p>}
+        <Input id="edit-alert-destination" inputMode="numeric" disabled={mutation.isPending} aria-describedby={form.formState.errors.destination ? "edit-alert-destination-error" : undefined} aria-invalid={!!form.formState.errors.destination} {...form.register("destination")} />
+        {form.formState.errors.destination && <p id="edit-alert-destination-error" className="text-sm text-red-500" aria-live="polite">{form.formState.errors.destination.message}</p>}
       </div>
 
       <Button type="submit" className="w-full" disabled={mutation.isPending}>

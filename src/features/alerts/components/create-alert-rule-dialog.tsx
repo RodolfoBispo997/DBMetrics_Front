@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -28,6 +29,9 @@ export function CreateAlertRuleDialog({ connectionId }: Props) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Alert Rule</DialogTitle>
+          <DialogDescription>
+            Configure the condition and WhatsApp destination for this alert rule.
+          </DialogDescription>
         </DialogHeader>
         <CreateAlertRuleForm connectionId={connectionId} onSuccess={() => setOpen(false)} />
       </DialogContent>

@@ -26,18 +26,15 @@ import { AlertsRow } from "./alerts-row";
 
 type Props = {
   connections: DatabaseConnection[];
-  selectedConnectionId: string;
+  connectionId: string;
   onSelectedConnectionIdChange: (connectionId: string) => void;
 };
 
 export function AlertsTable({
   connections,
-  selectedConnectionId,
+  connectionId,
   onSelectedConnectionIdChange,
 }: Props) {
-  const effectiveConnectionId =
-    selectedConnectionId || connections[0]?.id || "";
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -49,7 +46,7 @@ export function AlertsTable({
             Connection
           </label>
           <Select
-            value={effectiveConnectionId}
+            value={connectionId}
             onValueChange={onSelectedConnectionIdChange}
           >
             <SelectTrigger
@@ -69,7 +66,7 @@ export function AlertsTable({
         </div>
       </div>
 
-      <RulesList connectionId={effectiveConnectionId} />
+      <RulesList connectionId={connectionId} />
     </div>
   );
 }

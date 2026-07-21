@@ -20,9 +20,9 @@ import {
 } from "../constants/alert-options";
 import { useCreateAlertRule } from "../hooks/use-create-alert-rule";
 import {
-  CreateAlertRuleFormData,
-  createAlertRuleSchema,
-} from "../schemas/create-alert-rule.schema";
+  AlertRuleFormData,
+  alertRuleFormSchema,
+} from "../schemas/alert-rule-form.schema";
 
 type Props = {
   connectionId: string;
@@ -30,8 +30,8 @@ type Props = {
 };
 
 export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
-  const form = useForm<CreateAlertRuleFormData>({
-    resolver: zodResolver(createAlertRuleSchema),
+  const form = useForm<AlertRuleFormData>({
+    resolver: zodResolver(alertRuleFormSchema),
     defaultValues: {
       metric: "DATABASE_SIZE",
       operator: "GREATER_THAN",
@@ -41,7 +41,7 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
   });
   const mutation = useCreateAlertRule();
 
-  function onSubmit(data: CreateAlertRuleFormData) {
+  function onSubmit(data: AlertRuleFormData) {
     mutation.mutate(
       { connectionId, ...data, channel: "WHATSAPP" },
       {
@@ -66,7 +66,12 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
               onValueChange={field.onChange}
               disabled={mutation.isPending}
             >
-              <SelectTrigger id="alert-metric" className="w-full">
+              <SelectTrigger
+                id="alert-metric"
+                className="w-full"
+                aria-describedby={form.formState.errors.metric ? "alert-metric-error" : undefined}
+                aria-invalid={!!form.formState.errors.metric}
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -80,7 +85,7 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
           )}
         />
         {form.formState.errors.metric && (
-          <p className="text-sm text-red-500">
+          <p id="alert-metric-error" className="text-sm text-red-500" aria-live="polite">
             {form.formState.errors.metric.message}
           </p>
         )}
@@ -97,7 +102,12 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
               onValueChange={field.onChange}
               disabled={mutation.isPending}
             >
-              <SelectTrigger id="alert-operator" className="w-full">
+              <SelectTrigger
+                id="alert-operator"
+                className="w-full"
+                aria-describedby={form.formState.errors.operator ? "alert-operator-error" : undefined}
+                aria-invalid={!!form.formState.errors.operator}
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -111,7 +121,7 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
           )}
         />
         {form.formState.errors.operator && (
-          <p className="text-sm text-red-500">
+          <p id="alert-operator-error" className="text-sm text-red-500" aria-live="polite">
             {form.formState.errors.operator.message}
           </p>
         )}
@@ -125,10 +135,12 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
           min="0"
           step="any"
           disabled={mutation.isPending}
+          aria-describedby={form.formState.errors.threshold ? "alert-threshold-error" : undefined}
+          aria-invalid={!!form.formState.errors.threshold}
           {...form.register("threshold", { valueAsNumber: true })}
         />
         {form.formState.errors.threshold && (
-          <p className="text-sm text-red-500">
+          <p id="alert-threshold-error" className="text-sm text-red-500" aria-live="polite">
             {form.formState.errors.threshold.message}
           </p>
         )}
@@ -141,10 +153,12 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
           inputMode="numeric"
           placeholder="5511999999999"
           disabled={mutation.isPending}
+          aria-describedby={form.formState.errors.destination ? "alert-destination-error" : undefined}
+          aria-invalid={!!form.formState.errors.destination}
           {...form.register("destination")}
         />
         {form.formState.errors.destination && (
-          <p className="text-sm text-red-500">
+          <p id="alert-destination-error" className="text-sm text-red-500" aria-live="polite">
             {form.formState.errors.destination.message}
           </p>
         )}

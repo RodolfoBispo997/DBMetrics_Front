@@ -21,7 +21,7 @@ const operators = [
   "NOT_EQUAL",
 ] as const satisfies readonly AlertOperator[];
 
-export const createAlertRuleSchema = z.object({
+export const alertRuleFormSchema = z.object({
   metric: z.enum(metrics, "Metric is required"),
   operator: z.enum(operators, "Operator is required"),
   threshold: z
@@ -34,4 +34,4 @@ export const createAlertRuleSchema = z.object({
     .regex(/^55\d{10,11}$/, "Use a 12 or 13 digit WhatsApp number starting with 55"),
 });
 
-export type CreateAlertRuleFormData = z.infer<typeof createAlertRuleSchema>;
+export type AlertRuleFormData = z.infer<typeof alertRuleFormSchema>;

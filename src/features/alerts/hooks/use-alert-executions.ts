@@ -11,23 +11,7 @@ export function useAlertExecutions(
 ) {
   return useQuery<PaginatedAlertExecutions>({
     queryKey: alertKeys.executionsByConnection(connectionId, page, pageSize),
-    queryFn: async () => {
-      const response = await alertsService.listExecutions(
-        connectionId,
-        page,
-        pageSize,
-      );
-
-      if (response.meta.totalPages > 0 && page > response.meta.totalPages) {
-        return alertsService.listExecutions(
-          connectionId,
-          response.meta.totalPages,
-          pageSize,
-        );
-      }
-
-      return response;
-    },
+    queryFn: () => alertsService.listExecutions(connectionId, page, pageSize),
     enabled: !!connectionId,
     placeholderData: keepPreviousData,
   });

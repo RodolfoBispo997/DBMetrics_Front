@@ -1,7 +1,6 @@
 import { api } from "@/lib/api";
 
 import {
-  AlertExecution,
   PaginatedAlertExecutions,
   AlertRule,
   CreateAlertRuleInput,
@@ -9,12 +8,6 @@ import {
 } from "../types/alert";
 
 export const alertsService = {
-  async getRule(alertRuleId: string): Promise<AlertRule> {
-    const response = await api.get<AlertRule>(`/alerts/${alertRuleId}`);
-
-    return response.data;
-  },
-
   async listRules(connectionId: string): Promise<AlertRule[]> {
     const response = await api.get<AlertRule[]>(
       `/alerts/connection/${connectionId}`,
@@ -58,14 +51,6 @@ export const alertsService = {
 
   async deleteRule(alertRuleId: string): Promise<void> {
     await api.delete(`/alerts/${alertRuleId}`);
-  },
-
-  async getExecution(executionId: string): Promise<AlertExecution> {
-    const response = await api.get<AlertExecution>(
-      `/alerts/executions/${executionId}`,
-    );
-
-    return response.data;
   },
 
   async listExecutions(

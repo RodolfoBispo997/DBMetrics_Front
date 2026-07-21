@@ -44,7 +44,7 @@ export function AlertsPageContent() {
 
         <AlertsTable
           connections={connections}
-          selectedConnectionId={selectedConnectionId}
+          connectionId={effectiveConnectionId}
           onSelectedConnectionIdChange={setSelectedConnectionId}
         />
       </section>

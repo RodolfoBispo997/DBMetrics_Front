@@ -18,11 +18,6 @@ export function useDeleteAlertRule() {
       queryClient.invalidateQueries({
         queryKey: alertKeys.rulesByConnection(variables.databaseConnectionId),
       });
-      queryClient.removeQueries({
-        queryKey: alertKeys.ruleDetail(variables.alertRuleId),
-        exact: true,
-      });
-
       toast.success("Alert rule deleted successfully.");
     },
 
