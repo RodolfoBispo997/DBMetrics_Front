@@ -67,7 +67,9 @@ export function DatabaseConnectionsActions({
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild>
-            <Link href={`/database-connections/${connection.id}`}>
+            <Link
+              href={`/database-connections/details?connectionId=${encodeURIComponent(connection.id)}`}
+            >
               View Details
             </Link>
           </DropdownMenuItem>

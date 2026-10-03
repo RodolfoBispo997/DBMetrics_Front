@@ -319,7 +319,7 @@ src/app/
 │   │   └── page.tsx
 │   ├── database-connections/
 │   │   ├── page.tsx
-│   │   └── [connectionId]/
+│   │   └── details/
 │   │       └── page.tsx
 │   ├── alerts/
 │   │   └── page.tsx

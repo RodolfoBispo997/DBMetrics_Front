@@ -103,7 +103,7 @@ export function DashboardConnectionCard({
 
       <div className="mt-6">
         <Link
-          href={`/database-connections/${connection.connectionId}`}
+          href={`/database-connections/details?connectionId=${encodeURIComponent(connection.connectionId)}`}
           className="inline-flex rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-slate-950"
         >
           View details
