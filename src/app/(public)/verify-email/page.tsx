@@ -15,7 +15,11 @@ import {
   resendVerificationSchema,
 } from "@/features/auth/schemas/verification.schema";
 
-type VerificationState = "checking" | "success" | "unavailable";
+type VerificationState =
+  | "checking"
+  | "success"
+  | "unavailable"
+  | "public-unavailable";
 
 function getErrorMessage(error: unknown, action: "verify" | "resend") {
   if (!axios.isAxiosError(error)) {
@@ -31,19 +35,18 @@ function getErrorMessage(error: unknown, action: "verify" | "resend") {
       return "A funcionalidade pública de verificação está indisponível.";
     case 429:
       return "Limite de tentativas atingido. Tente novamente mais tarde.";
-    case 500:
-    case 502:
-    case 503:
-    case 504:
-      return "O servidor está temporariamente indisponível. Tente novamente mais tarde.";
     default:
+      if (error.response && error.response.status >= 500 && error.response.status <= 599) {
+        return "O servidor está temporariamente indisponível. Tente novamente mais tarde.";
+      }
+
       return error.response
         ? "Não foi possível concluir a operação."
         : "Não foi possível conectar ao servidor.";
   }
 }
 
-function ResendVerificationForm() {
+function ResendVerificationForm({ defaultEmail }: { defaultEmail: string }) {
   const [resendSuccess, setResendSuccess] = useState(false);
   const { mutate, isPending, error, reset } = useResendVerification();
   const {
@@ -52,6 +55,7 @@ function ResendVerificationForm() {
     formState: { errors },
   } = useForm<ResendVerificationFormData>({
     resolver: zodResolver(resendVerificationSchema),
+    defaultValues: { email: defaultEmail },
   });
 
   function onSubmit(data: ResendVerificationFormData) {
@@ -101,6 +105,7 @@ function ResendVerificationForm() {
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token")?.trim() ?? "";
+  const email = searchParams.get("email")?.trim() ?? "";
   const attemptedToken = useRef<string | null>(null);
   const [verificationState, setVerificationState] = useState<VerificationState>(
     token ? "checking" : "unavailable",
@@ -111,30 +116,48 @@ function VerifyEmailContent() {
   const { mutate } = useVerifyEmail();
 
   useEffect(() => {
-    if (!token || attemptedToken.current === token) {
+    if (!token) {
+      attemptedToken.current = null;
+      return;
+    }
+
+    if (attemptedToken.current === token) {
       return;
     }
 
     attemptedToken.current = token;
+    setVerificationState("checking");
+    setVerificationMessage("");
     mutate(
       { token },
       {
         onSuccess() {
+          if (attemptedToken.current !== token) return;
           setVerificationState("success");
         },
         onError(error) {
+          if (attemptedToken.current !== token) return;
           setVerificationMessage(getErrorMessage(error, "verify"));
-          setVerificationState("unavailable");
+          setVerificationState(
+            axios.isAxiosError(error) && error.response?.status === 404
+              ? "public-unavailable"
+              : "unavailable",
+          );
         },
       },
     );
   }, [mutate, token]);
 
-  if (verificationState === "checking") {
+  const visibleState = token ? verificationState : "unavailable";
+  const visibleMessage = token
+    ? verificationMessage
+    : "O link de confirmação não foi informado.";
+
+  if (visibleState === "checking") {
     return <p className="text-slate-300">Validando seu link de confirmação...</p>;
   }
 
-  if (verificationState === "success") {
+  if (visibleState === "success") {
     return (
       <section aria-labelledby="verification-success-title">
         <h1 id="verification-success-title" className="mb-4 text-2xl font-bold">
@@ -150,11 +173,25 @@ function VerifyEmailContent() {
     );
   }
 
+  if (visibleState === "public-unavailable") {
+    return (
+      <section aria-labelledby="verification-unavailable-title">
+        <h1 id="verification-unavailable-title" className="mb-4 text-2xl font-bold">
+          Verificação indisponível
+        </h1>
+        <p className="mb-6 text-slate-300">{visibleMessage}</p>
+        <Link href="/login" className="block w-full rounded-md bg-blue-600 p-3 text-center hover:bg-blue-700">
+          Voltar para o login
+        </Link>
+      </section>
+    );
+  }
+
   return (
     <>
       <h1 className="mb-4 text-2xl font-bold">Link indisponível</h1>
-      <p className="text-slate-300">{verificationMessage}</p>
-      <ResendVerificationForm />
+      <p className="text-slate-300">{visibleMessage}</p>
+      <ResendVerificationForm defaultEmail={token ? "" : email} />
       <p className="mt-6 text-center text-sm text-slate-300">
         <Link href="/login" className="text-blue-400 hover:underline">Voltar para o login</Link>
       </p>
