@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import axios from "axios";
@@ -18,6 +19,7 @@ import { isAuthenticated, saveToken } from "@/lib/token-storage";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
 
   // A rota pública verifica a existência da sessão apenas durante a montagem.
   // Alterações posteriores na sessão são tratadas pela infraestrutura HTTP.
@@ -40,6 +42,8 @@ export default function LoginPage() {
   });
 
   function onSubmit(data: LoginFormData) {
+    setUnverifiedEmail(null);
+
     mutate(data, {
       onSuccess(response) {
         saveToken(response.accessToken);
@@ -58,13 +62,26 @@ export default function LoginPage() {
             toast.error("E-mail ou senha inválidos.");
             break;
 
-          case 500:
-            toast.error("Erro interno do servidor.");
+          case 403:
+            setUnverifiedEmail(data.email);
+            break;
+
+          case 404:
+            toast.error("O serviço de login está indisponível no momento.");
+            break;
+
+          case 429:
+            toast.error("Muitas tentativas de login. Tente novamente mais tarde.");
             break;
 
           default:
             if (!error.response) {
               toast.error("Não foi possível conectar ao servidor.");
+            } else if (
+              error.response.status >= 500 &&
+              error.response.status <= 599
+            ) {
+              toast.error("Erro interno do servidor. Tente novamente mais tarde.");
             } else {
               toast.error("Não foi possível realizar o login.");
             }
@@ -85,10 +102,31 @@ export default function LoginPage() {
       >
         <h1 className="mb-6 text-2xl font-bold">DBMetrics</h1>
 
+        {unverifiedEmail && (
+          <div
+            role="alert"
+            aria-live="polite"
+            className="mb-4 rounded-md border border-amber-400/40 bg-amber-400/10 p-3 text-sm text-amber-100"
+          >
+            <p className="mb-2">
+              Seu e-mail ainda não foi confirmado. Confirme seu e-mail antes de acessar o sistema.
+            </p>
+            <Link
+              href={`/verify-email?email=${encodeURIComponent(unverifiedEmail)}`}
+              className="font-medium text-amber-300 underline hover:text-amber-200"
+            >
+              Reenviar e-mail de confirmação
+            </Link>
+          </div>
+        )}
+
         <div className="mb-4">
+          <label htmlFor="login-email" className="sr-only">E-mail</label>
           <input
+            id="login-email"
             type="email"
             placeholder="E-mail"
+            autoComplete="email"
             {...register("email")}
             className="w-full rounded-md bg-slate-800 p-3"
           />
@@ -99,9 +137,12 @@ export default function LoginPage() {
         </div>
 
         <div className="mb-6">
+          <label htmlFor="login-password" className="sr-only">Senha</label>
           <input
+            id="login-password"
             type="password"
             placeholder="Senha"
+            autoComplete="current-password"
             {...register("password")}
             className="w-full rounded-md bg-slate-800 p-3"
           />
@@ -120,6 +161,10 @@ export default function LoginPage() {
         >
           {isPending ? "Entrando..." : "Entrar"}
         </button>
+
+        <p className="mt-4 text-center text-sm text-slate-300">
+          Ainda não tem uma conta? <Link href="/register" className="text-blue-400 hover:underline">Cadastre-se</Link>
+        </p>
       </form>
     </main>
   );
