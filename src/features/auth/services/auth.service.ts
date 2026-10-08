@@ -36,3 +36,7 @@ export async function resendVerification(data: ResendVerificationRequest) {
 
   return response.data;
 }
+
+export async function logout() {
+  await api.post<void>("/auth/logout");
+}

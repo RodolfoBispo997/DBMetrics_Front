@@ -2,10 +2,14 @@ import axios from "axios";
 
 import { env } from "./env";
 import { getToken, removeToken } from "./token-storage";
+import { clearQueryCache } from "./query-cache";
 
 export const api = axios.create({
   baseURL: env.apiUrl,
+  withCredentials: true,
 });
+
+let redirectingToLogin = false;
 
 api.interceptors.request.use((config) => {
   const token = getToken();
@@ -26,10 +30,14 @@ api.interceptors.response.use(
       error.config?.method?.toLowerCase() === "post" &&
       error.config?.url === "/auth/login";
 
-    if (status === 401 && !isLoginRequest) {
-      removeToken();
+    const hasAuthenticatedSession = Boolean(getToken());
 
-      if (window.location.pathname !== "/login") {
+    if (status === 401 && hasAuthenticatedSession && !isLoginRequest) {
+      removeToken();
+      clearQueryCache();
+
+      if (!redirectingToLogin && window.location.pathname !== "/login") {
+        redirectingToLogin = true;
         window.location.replace("/login");
       }
     }
