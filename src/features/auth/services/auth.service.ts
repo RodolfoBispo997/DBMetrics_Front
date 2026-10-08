@@ -2,6 +2,7 @@ import { api } from "@/lib/api";
 import {
   LoginRequest,
   LoginResponse,
+  CurrentUser,
   RegisterRequest,
   RegisterResponse,
   ResendVerificationRequest,
@@ -39,4 +40,10 @@ export async function resendVerification(data: ResendVerificationRequest) {
 
 export async function logout() {
   await api.post<void>("/auth/logout");
+}
+
+export async function getCurrentUser() {
+  const response = await api.get<CurrentUser>("/auth/me");
+
+  return response.data;
 }

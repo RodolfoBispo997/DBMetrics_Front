@@ -32,3 +32,11 @@ export interface ResendVerificationRequest {
 export interface ResendVerificationResponse {
   message: string;
 }
+
+export type UserRole = "ADMIN" | "MEMBER" | "VIEWER";
+
+export interface CurrentUser {
+  userId: string;
+  email: string;
+  role: UserRole;
+}
