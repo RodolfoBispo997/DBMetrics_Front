@@ -43,12 +43,14 @@ export default function RegisterPage() {
           case 429:
             toast.error("Limite de tentativas atingido. Tente novamente mais tarde.");
             break;
-          case 500:
-            toast.error("Erro interno do servidor.");
-            break;
           default:
             if (!error.response) {
               toast.error("Não foi possível conectar ao servidor.");
+            } else if (
+              error.response.status >= 500 &&
+              error.response.status <= 599
+            ) {
+              toast.error("Erro interno do servidor.");
             } else {
               toast.error("Não foi possível realizar o cadastro.");
             }
