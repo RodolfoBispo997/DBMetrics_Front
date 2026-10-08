@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import axios from "axios";
@@ -86,9 +87,12 @@ export default function LoginPage() {
         <h1 className="mb-6 text-2xl font-bold">DBMetrics</h1>
 
         <div className="mb-4">
+          <label htmlFor="login-email" className="sr-only">E-mail</label>
           <input
+            id="login-email"
             type="email"
             placeholder="E-mail"
+            autoComplete="email"
             {...register("email")}
             className="w-full rounded-md bg-slate-800 p-3"
           />
@@ -99,9 +103,12 @@ export default function LoginPage() {
         </div>
 
         <div className="mb-6">
+          <label htmlFor="login-password" className="sr-only">Senha</label>
           <input
+            id="login-password"
             type="password"
             placeholder="Senha"
+            autoComplete="current-password"
             {...register("password")}
             className="w-full rounded-md bg-slate-800 p-3"
           />
@@ -120,6 +127,10 @@ export default function LoginPage() {
         >
           {isPending ? "Entrando..." : "Entrar"}
         </button>
+
+        <p className="mt-4 text-center text-sm text-slate-300">
+          Ainda não tem uma conta? <Link href="/register" className="text-blue-400 hover:underline">Cadastre-se</Link>
+        </p>
       </form>
     </main>
   );
