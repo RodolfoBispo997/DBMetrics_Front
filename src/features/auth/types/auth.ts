@@ -16,3 +16,19 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   message: string;
 }
+
+export interface VerifyEmailRequest {
+  token: string;
+}
+
+export interface VerifyEmailResponse {
+  verified: true;
+}
+
+export interface ResendVerificationRequest {
+  email: string;
+}
+
+export interface ResendVerificationResponse {
+  message: string;
+}
