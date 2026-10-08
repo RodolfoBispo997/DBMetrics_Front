@@ -47,9 +47,15 @@ function getMutationCallbacks() {
 }
 
 function axiosError(status: number) {
-  return Object.assign(new Error("request failed"), {
+  return Object.assign(new Error("SECRET_TECHNICAL_DETAIL"), {
     isAxiosError: true,
     response: { status },
+  });
+}
+
+function networkError() {
+  return Object.assign(new Error("SECRET_TECHNICAL_DETAIL"), {
+    isAxiosError: true,
   });
 }
 
@@ -101,5 +107,39 @@ describe("login page", () => {
       "access-token-value",
     );
     expect(mocks.replace).toHaveBeenCalledWith("/dashboard");
+  });
+
+  it.each([
+    [404, "O serviço de login está indisponível no momento."],
+    [429, "Muitas tentativas de login. Tente novamente mais tarde."],
+    [500, "Erro interno do servidor. Tente novamente mais tarde."],
+    [599, "Erro interno do servidor. Tente novamente mais tarde."],
+  ])("em %i mostra mensagem adequada sem detalhes técnicos", async (status, message) => {
+    render(<LoginPage />);
+    submitCredentials();
+    await waitFor(() => expect(mocks.loginMutation).toHaveBeenCalledOnce());
+
+    act(() => getMutationCallbacks().onError(axiosError(status)));
+
+    expect(mocks.toastError).toHaveBeenCalledWith(message);
+    expect(mocks.toastError.mock.calls.flat().join(" ")).not.toContain(
+      "SECRET_TECHNICAL_DETAIL",
+    );
+    expect(mocks.replace).not.toHaveBeenCalledWith("/dashboard");
+  });
+
+  it("sem response mostra erro de conexão sem detalhes técnicos", async () => {
+    render(<LoginPage />);
+    submitCredentials();
+    await waitFor(() => expect(mocks.loginMutation).toHaveBeenCalledOnce());
+
+    act(() => getMutationCallbacks().onError(networkError()));
+
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      "Não foi possível conectar ao servidor.",
+    );
+    expect(mocks.toastError.mock.calls.flat().join(" ")).not.toContain(
+      "SECRET_TECHNICAL_DETAIL",
+    );
   });
 });

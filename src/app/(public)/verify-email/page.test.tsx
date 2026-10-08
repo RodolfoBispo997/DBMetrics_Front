@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   search: "",
   verifyMutation: vi.fn(),
   resendMutation: vi.fn(),
+  resendError: null as unknown,
 }));
 
 vi.mock("next/navigation", () => ({
@@ -27,7 +28,7 @@ vi.mock("@/features/auth/hooks/use-resend-verification", () => ({
   useResendVerification: () => ({
     mutate: mocks.resendMutation,
     isPending: false,
-    error: null,
+    error: mocks.resendError,
     reset: vi.fn(),
   }),
 }));
@@ -48,16 +49,30 @@ function getResendCallbacks() {
 }
 
 function axiosError(status: number) {
-  return Object.assign(new Error("request failed"), {
+  return Object.assign(new Error("SECRET_TECHNICAL_DETAIL"), {
     isAxiosError: true,
     response: { status },
   });
+}
+
+function networkError() {
+  return Object.assign(new Error("SECRET_TECHNICAL_DETAIL"), {
+    isAxiosError: true,
+  });
+}
+
+function submitResend() {
+  fireEvent.change(screen.getByRole("textbox", { name: "E-mail" }), {
+    target: { value: "ana@example.com" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Reenviar confirmação" }));
 }
 
 describe("verify email page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.search = "";
+    mocks.resendError = null;
   });
 
   it("com token chama verificação uma vez e apresenta sucesso", () => {
@@ -161,5 +176,60 @@ describe("verify email page", () => {
       screen.queryByRole("button", { name: "Reenviar confirmação" }),
     ).toBeNull();
     expect(screen.queryByRole("textbox", { name: "E-mail" })).toBeNull();
+  });
+
+  it.each([
+    [429, "Limite de tentativas atingido. Tente novamente mais tarde."],
+    [500, "O servidor está temporariamente indisponível. Tente novamente mais tarde."],
+    [599, "O servidor está temporariamente indisponível. Tente novamente mais tarde."],
+  ])("falha de verificação %i mostra mensagem segura e permite reenvio", (status, message) => {
+    mocks.search = "?token=token-to-check";
+    render(<VerifyEmailPage />);
+
+    act(() => getVerifyCallbacks().onError(axiosError(status)));
+
+    expect(screen.getByText(message)).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Reenviar confirmação" })).toBeTruthy();
+    expect(screen.queryByText("SECRET_TECHNICAL_DETAIL")).toBeNull();
+  });
+
+  it("falha de rede na verificação mostra mensagem segura e permite reenvio", () => {
+    mocks.search = "?token=token-to-check";
+    render(<VerifyEmailPage />);
+
+    act(() => getVerifyCallbacks().onError(networkError()));
+
+    expect(screen.getByText("Não foi possível conectar ao servidor.")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Reenviar confirmação" })).toBeTruthy();
+    expect(screen.queryByText("SECRET_TECHNICAL_DETAIL")).toBeNull();
+  });
+
+  it.each([
+    [404, "A funcionalidade pública de verificação está indisponível."],
+    [429, "Limite de tentativas atingido. Tente novamente mais tarde."],
+    [500, "O servidor está temporariamente indisponível. Tente novamente mais tarde."],
+    [599, "O servidor está temporariamente indisponível. Tente novamente mais tarde."],
+  ])("falha de reenvio %i mostra mensagem segura", async (status, message) => {
+    const { rerender } = render(<VerifyEmailPage />);
+    submitResend();
+
+    await waitFor(() => expect(mocks.resendMutation).toHaveBeenCalledOnce());
+    mocks.resendError = axiosError(status);
+    rerender(<VerifyEmailPage />);
+
+    expect(screen.getByText(message)).toBeTruthy();
+    expect(screen.queryByText("SECRET_TECHNICAL_DETAIL")).toBeNull();
+  });
+
+  it("falha de rede no reenvio mostra mensagem segura", async () => {
+    const { rerender } = render(<VerifyEmailPage />);
+    submitResend();
+
+    await waitFor(() => expect(mocks.resendMutation).toHaveBeenCalledOnce());
+    mocks.resendError = networkError();
+    rerender(<VerifyEmailPage />);
+
+    expect(screen.getByText("Não foi possível conectar ao servidor.")).toBeTruthy();
+    expect(screen.queryByText("SECRET_TECHNICAL_DETAIL")).toBeNull();
   });
 });

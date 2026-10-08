@@ -44,7 +44,21 @@ function submitRegistration() {
 function getMutationCallbacks() {
   return mocks.registerMutation.mock.calls[0]?.[1] as {
     onSuccess: (response: { message: string }) => void;
+    onError: (error: unknown) => void;
   };
+}
+
+function axiosError(status: number) {
+  return Object.assign(new Error("SECRET_TECHNICAL_DETAIL"), {
+    isAxiosError: true,
+    response: { status },
+  });
+}
+
+function networkError() {
+  return Object.assign(new Error("SECRET_TECHNICAL_DETAIL"), {
+    isAxiosError: true,
+  });
 }
 
 describe("register page", () => {
@@ -91,5 +105,38 @@ describe("register page", () => {
     ).toBe("/login");
     expect(screen.queryByRole("button", { name: "Cadastrar" })).toBeNull();
     expect(screen.queryByRole("textbox", { name: "Nome" })).toBeNull();
+  });
+
+  it.each([
+    [404, "O cadastro público está indisponível."],
+    [429, "Limite de tentativas atingido. Tente novamente mais tarde."],
+    [500, "Erro interno do servidor."],
+    [599, "Erro interno do servidor."],
+  ])("em %i mostra mensagem adequada sem detalhes técnicos", async (status, message) => {
+    render(<RegisterPage />);
+    submitRegistration();
+    await waitFor(() => expect(mocks.registerMutation).toHaveBeenCalledOnce());
+
+    act(() => getMutationCallbacks().onError(axiosError(status)));
+
+    expect(mocks.toastError).toHaveBeenCalledWith(message);
+    expect(mocks.toastError.mock.calls.flat().join(" ")).not.toContain(
+      "SECRET_TECHNICAL_DETAIL",
+    );
+  });
+
+  it("sem response mostra erro de conexão sem detalhes técnicos", async () => {
+    render(<RegisterPage />);
+    submitRegistration();
+    await waitFor(() => expect(mocks.registerMutation).toHaveBeenCalledOnce());
+
+    act(() => getMutationCallbacks().onError(networkError()));
+
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      "Não foi possível conectar ao servidor.",
+    );
+    expect(mocks.toastError.mock.calls.flat().join(" ")).not.toContain(
+      "SECRET_TECHNICAL_DETAIL",
+    );
   });
 });
