@@ -1,8 +1,8 @@
 import {
   FieldErrors,
+  Control,
   UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
+  useController,
 } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
@@ -15,22 +15,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { DatabaseProvider } from "../types/database-connection";
 import { DatabaseConnectionForm } from "../types/database-connection-form";
 
 type Props = {
   register: UseFormRegister<DatabaseConnectionForm>;
-  watch: UseFormWatch<DatabaseConnectionForm>;
-  setValue: UseFormSetValue<DatabaseConnectionForm>;
+  control: Control<DatabaseConnectionForm>;
   errors: FieldErrors<DatabaseConnectionForm>;
 };
 
 export function DatabaseConnectionFields({
   register,
-  watch,
-  setValue,
+  control,
   errors,
 }: Props) {
+  const { field: providerField } = useController({
+    name: "provider",
+    control,
+  });
+
   return (
     <>
       <div className="space-y-2">
@@ -51,12 +53,8 @@ export function DatabaseConnectionFields({
         <Label>Provider</Label>
 
         <Select
-          value={watch("provider")}
-          onValueChange={(value) =>
-            setValue("provider", value as DatabaseProvider, {
-              shouldValidate: true,
-            })
-          }
+          value={providerField.value}
+          onValueChange={providerField.onChange}
         >
           <SelectTrigger>
             <SelectValue />
