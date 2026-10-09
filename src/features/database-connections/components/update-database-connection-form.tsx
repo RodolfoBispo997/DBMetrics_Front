@@ -61,8 +61,7 @@ export function UpdateDatabaseConnectionForm({ connection, onSuccess }: Props) {
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <DatabaseConnectionFields
         register={form.register}
-        watch={form.watch}
-        setValue={form.setValue}
+        control={form.control}
         errors={form.formState.errors}
       />
 
