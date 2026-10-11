@@ -17,14 +17,15 @@ export type AlertOperator =
 
 export type AlertExecutionStatus = "PENDING" | "SENT" | "FAILED";
 
-export type NotificationChannel = "WHATSAPP";
+export type NotificationChannel = "EMAIL" | "WHATSAPP";
 
 export type CreateAlertRuleInput = {
   connectionId: string;
   metric: AlertMetric;
   operator: AlertOperator;
   threshold: number;
-  channel: "WHATSAPP";
+  cooldownMinutes: number;
+  channel: NotificationChannel;
   destination: string;
 };
 
@@ -34,7 +35,8 @@ export type UpdateAlertRuleInput = {
   metric: AlertMetric;
   operator: AlertOperator;
   threshold: number;
-  channel: "WHATSAPP";
+  cooldownMinutes: number;
+  channel: NotificationChannel;
   destination: string;
 };
 
@@ -56,6 +58,7 @@ export type AlertRule = {
   threshold: number;
   channel: NotificationChannel;
   destination: string;
+  cooldownMinutes: number;
   enabled: boolean;
   createdAt: string;
   updatedAt: string;

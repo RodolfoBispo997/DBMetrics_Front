@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertRule } from "@/features/alerts/types/alert";
-import { alertMetricLabels, alertOperatorLabels } from "../constants/alert-options";
+import { alertMetricLabels, alertOperatorLabels, notificationChannelLabels } from "../constants/alert-options";
 import { AlertStatusToggle } from "./alert-status-toggle";
 import { DeleteAlertRuleDialog } from "./delete-alert-rule-dialog";
 import { UpdateAlertRuleDialog } from "./update-alert-rule-dialog";
@@ -15,7 +15,7 @@ export function AlertsRow({ rule }: { rule: AlertRule }) {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const op = alertOperatorLabels[rule.operator];
   const metric = alertMetricLabels[rule.metric];
-  const channel = rule.channel === "WHATSAPP" ? "WhatsApp" : rule.channel;
+  const channel = notificationChannelLabels[rule.channel];
 
   return (
     <TableRow>

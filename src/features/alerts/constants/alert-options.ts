@@ -2,7 +2,13 @@ import {
   AlertExecutionStatus,
   AlertMetric,
   AlertOperator,
+  NotificationChannel,
 } from "../types/alert";
+
+export const notificationChannelLabels: Record<NotificationChannel, string> = {
+  EMAIL: "Email",
+  WHATSAPP: "WhatsApp",
+};
 
 export const alertMetricLabels: Record<AlertMetric, string> = {
   DATABASE_SIZE: "Database Size",

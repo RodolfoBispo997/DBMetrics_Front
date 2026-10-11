@@ -30,7 +30,7 @@ export function CreateAlertRuleDialog({ connectionId }: Props) {
         <DialogHeader>
           <DialogTitle>Create Alert Rule</DialogTitle>
           <DialogDescription>
-            Configure the condition and WhatsApp destination for this alert rule.
+            Configure the condition, notification channel, and destination for this alert rule.
           </DialogDescription>
         </DialogHeader>
         <CreateAlertRuleForm connectionId={connectionId} onSuccess={() => setOpen(false)} />

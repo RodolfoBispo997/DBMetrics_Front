@@ -17,6 +17,7 @@ import {
 import {
   alertMetricLabels,
   alertOperatorLabels,
+  notificationChannelLabels,
 } from "../constants/alert-options";
 import { useCreateAlertRule } from "../hooks/use-create-alert-rule";
 import {
@@ -36,14 +37,17 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
       metric: "DATABASE_SIZE",
       operator: "GREATER_THAN",
       threshold: 0,
+      cooldownMinutes: 30,
+      channel: "WHATSAPP",
       destination: "",
     },
   });
   const mutation = useCreateAlertRule();
+  const channel = form.watch("channel");
 
   function onSubmit(data: AlertRuleFormData) {
     mutation.mutate(
-      { connectionId, ...data, channel: "WHATSAPP" },
+      { connectionId, ...data },
       {
         onSuccess() {
           form.reset();
@@ -147,11 +151,40 @@ export function CreateAlertRuleForm({ connectionId, onSuccess }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="alert-destination">WhatsApp destination</Label>
+        <Label htmlFor="alert-cooldown-minutes">Cooldown (minutos)</Label>
+        <Input
+          id="alert-cooldown-minutes"
+          type="number"
+          min="1"
+          max="10080"
+          step="1"
+          disabled={mutation.isPending}
+          {...form.register("cooldownMinutes", { valueAsNumber: true })}
+        />
+        {form.formState.errors.cooldownMinutes && (
+          <p className="text-sm text-red-500" aria-live="polite">
+            {form.formState.errors.cooldownMinutes.message}
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="alert-channel">Channel</Label>
+        <Controller control={form.control} name="channel" render={({ field }) => (
+          <Select value={field.value} onValueChange={field.onChange} disabled={mutation.isPending}>
+            <SelectTrigger id="alert-channel" className="w-full"><SelectValue /></SelectTrigger>
+            <SelectContent>{Object.entries(notificationChannelLabels).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+          </Select>
+        )} />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="alert-destination">{channel === "EMAIL" ? "Email destination" : "WhatsApp destination"}</Label>
         <Input
           id="alert-destination"
-          inputMode="numeric"
-          placeholder="5511999999999"
+          type={channel === "EMAIL" ? "email" : "text"}
+          inputMode={channel === "EMAIL" ? "email" : "numeric"}
+          placeholder={channel === "EMAIL" ? "name@example.com" : "5511999999999"}
           disabled={mutation.isPending}
           aria-describedby={form.formState.errors.destination ? "alert-destination-error" : undefined}
           aria-invalid={!!form.formState.errors.destination}

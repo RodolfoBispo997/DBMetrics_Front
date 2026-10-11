@@ -105,6 +105,7 @@ describe("register page", () => {
     ).toBe("/login");
     expect(screen.queryByRole("button", { name: "Cadastrar" })).toBeNull();
     expect(screen.queryByRole("textbox", { name: "Nome" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Reenviar confirmação" }).getAttribute("href")).toBe("/verify-email?email=ana%40example.com");
   });
 
   it.each([

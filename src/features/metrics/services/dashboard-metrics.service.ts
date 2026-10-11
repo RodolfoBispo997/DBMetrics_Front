@@ -9,6 +9,10 @@ import {
 } from "../types/connection-metrics";
 
 export const dashboardMetricsService = {
+  async collect(connectionId: string) {
+    const response = await api.post(`/database-metrics/${connectionId}/collect`);
+    return response.data;
+  },
   async summary(
     connectionId: string,
   ): Promise<ConnectionMetricsSummaryResponse> {
