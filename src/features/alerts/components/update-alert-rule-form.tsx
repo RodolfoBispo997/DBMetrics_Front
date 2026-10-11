@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { alertMetricLabels, alertOperatorLabels } from "../constants/alert-options";
+import { alertMetricLabels, alertOperatorLabels, notificationChannelLabels } from "../constants/alert-options";
 import { useUpdateAlertRule } from "../hooks/use-update-alert-rule";
 import { AlertRuleFormData, alertRuleFormSchema } from "../schemas/alert-rule-form.schema";
 import { AlertRule } from "../types/alert";
@@ -31,10 +31,13 @@ export function UpdateAlertRuleForm({ rule, onSuccess }: Props) {
       metric: rule.metric,
       operator: rule.operator,
       threshold: rule.threshold,
+      cooldownMinutes: rule.cooldownMinutes,
+      channel: rule.channel,
       destination: rule.destination,
     },
   });
   const mutation = useUpdateAlertRule();
+  const channel = form.watch("channel");
 
   function onSubmit(data: AlertRuleFormData) {
     mutation.mutate(
@@ -42,7 +45,6 @@ export function UpdateAlertRuleForm({ rule, onSuccess }: Props) {
         alertRuleId: rule.id,
         databaseConnectionId: rule.databaseConnectionId,
         ...data,
-        channel: "WHATSAPP",
       },
       { onSuccess },
     );
@@ -79,8 +81,18 @@ export function UpdateAlertRuleForm({ rule, onSuccess }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="edit-alert-destination">WhatsApp destination</Label>
-        <Input id="edit-alert-destination" inputMode="numeric" disabled={mutation.isPending} aria-describedby={form.formState.errors.destination ? "edit-alert-destination-error" : undefined} aria-invalid={!!form.formState.errors.destination} {...form.register("destination")} />
+        <Label htmlFor="edit-alert-channel">Channel</Label>
+        <Controller control={form.control} name="channel" render={({ field }) => (
+          <Select value={field.value} onValueChange={field.onChange} disabled={mutation.isPending}>
+            <SelectTrigger id="edit-alert-channel" className="w-full"><SelectValue /></SelectTrigger>
+            <SelectContent>{Object.entries(notificationChannelLabels).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+          </Select>
+        )} />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="edit-alert-destination">{channel === "EMAIL" ? "Email destination" : "WhatsApp destination"}</Label>
+        <Input id="edit-alert-destination" type={channel === "EMAIL" ? "email" : "text"} inputMode={channel === "EMAIL" ? "email" : "numeric"} placeholder={channel === "EMAIL" ? "name@example.com" : "5511999999999"} disabled={mutation.isPending} aria-describedby={form.formState.errors.destination ? "edit-alert-destination-error" : undefined} aria-invalid={!!form.formState.errors.destination} {...form.register("destination")} />
         {form.formState.errors.destination && <p id="edit-alert-destination-error" className="text-sm text-red-500" aria-live="polite">{form.formState.errors.destination.message}</p>}
       </div>
 

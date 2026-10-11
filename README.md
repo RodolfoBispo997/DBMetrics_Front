@@ -536,7 +536,7 @@ flowchart LR
     C --> D[Definir métrica]
     D --> E[Definir operador]
     E --> F[Definir threshold]
-    F --> G[Informar destino WhatsApp]
+    F --> G[Selecionar canal e informar destino]
     G --> H[Salvar regra]
 
     B --> I[Habilitar ou desabilitar]
@@ -1028,7 +1028,7 @@ Essa divisão mantém a página principal objetiva e reserva análises mais deta
 - Não existe refresh token.
 - A validade do JWT é confirmada pelas respostas da API, não antecipadamente pelo cliente.
 - `Workspace` e `Settings` ainda não possuem interface funcional.
-- O canal de alerta disponível é o WhatsApp.
+- Os canais de alerta disponíveis são Email e WhatsApp.
 - Não existem testes automatizados no repositório.
 - Parte dos textos da interface está em inglês e não há estratégia de internacionalização.
 - O `AuthGuard` retorna conteúdo vazio durante a verificação inicial da sessão.
@@ -1047,7 +1047,7 @@ Essa divisão mantém a página principal objetiva e reserva análises mais deta
 - Implementar internacionalização.
 - Aprimorar acessibilidade e navegação por teclado.
 - Adicionar filtros avançados ao histórico.
-- Expandir canais de alerta.
+
 - Adicionar atualização periódica configurável das métricas.
 
 ---

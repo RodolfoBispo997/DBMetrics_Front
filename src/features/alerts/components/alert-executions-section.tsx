@@ -19,6 +19,7 @@ import {
   alertExecutionStatusLabels,
   alertMetricLabels,
   alertOperatorLabels,
+  notificationChannelLabels,
 } from "../constants/alert-options";
 import { useAlertExecutions } from "../hooks/use-alert-executions";
 import { AlertExecution, AlertExecutionStatus } from "../types/alert";
@@ -70,6 +71,7 @@ export function AlertExecutionsSection({ connectionId }: Props) {
               <TableHead>Operator</TableHead>
               <TableHead>Metric Value</TableHead>
               <TableHead>Threshold</TableHead>
+              <TableHead>Channel</TableHead>
               <TableHead>Destination</TableHead>
               <TableHead>Triggered At</TableHead>
               <TableHead>Sent At</TableHead>
@@ -124,6 +126,7 @@ function AlertExecutionRow({ execution }: { execution: AlertExecution }) {
       <TableCell>{alertOperatorLabels[execution.operator]}</TableCell>
       <TableCell>{execution.metricValue}</TableCell>
       <TableCell>{execution.threshold}</TableCell>
+      <TableCell>{notificationChannelLabels[execution.channel]}</TableCell>
       <TableCell className="max-w-56 truncate">{execution.destination}</TableCell>
       <TableCell className="whitespace-nowrap">{formatDate(execution.triggeredAt)}</TableCell>
       <TableCell className="whitespace-nowrap">

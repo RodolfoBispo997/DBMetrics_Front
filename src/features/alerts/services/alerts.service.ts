@@ -30,6 +30,7 @@ export const alertsService = {
       metric: input.metric,
       operator: input.operator,
       threshold: input.threshold,
+      cooldownMinutes: input.cooldownMinutes,
       channel: input.channel,
       destination: input.destination,
     });

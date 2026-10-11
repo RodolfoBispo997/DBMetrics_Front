@@ -24,7 +24,7 @@ export function UpdateAlertRuleDialog({ open, onOpenChange, rule }: Props) {
         <DialogHeader>
           <DialogTitle>Edit Alert Rule</DialogTitle>
           <DialogDescription>
-            Update the condition and WhatsApp destination for this alert rule.
+            Update the condition, notification channel, and destination for this alert rule.
           </DialogDescription>
         </DialogHeader>
         <UpdateAlertRuleForm key={rule.id} rule={rule} onSuccess={() => onOpenChange(false)} />

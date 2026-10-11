@@ -16,6 +16,7 @@ import {
 
 export default function RegisterPage() {
   const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
+  const [registeredEmail, setRegisteredEmail] = useState("");
   const { mutate, isPending } = useRegister();
   const {
     register,
@@ -28,6 +29,7 @@ export default function RegisterPage() {
   function onSubmit(data: RegisterFormData) {
     mutate(data, {
       onSuccess(response) {
+        setRegisteredEmail(data.email);
         setRegistrationMessage(response.message?.trim() || null);
       },
       onError(error) {
@@ -76,11 +78,12 @@ export default function RegisterPage() {
             <p className="mb-6 text-slate-300">{registrationMessage}</p>
           )}
           <Link
-            href="/login"
+            href={`/verify-email?email=${encodeURIComponent(registeredEmail)}`}
             className="block w-full rounded-md bg-blue-600 p-3 text-center transition-colors hover:bg-blue-700"
           >
-            Voltar para o login
+            Reenviar confirmação
           </Link>
+          <Link href="/login" className="mt-3 block text-center text-blue-400 hover:underline">Voltar para o login</Link>
         </section>
       ) : (
         <form

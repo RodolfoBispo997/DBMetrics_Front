@@ -6,12 +6,15 @@ import { PageHeader } from "@/components/page/page-header";
 import { ConnectionMetricsSummary } from "@/features/metrics/components/connection-metrics-summary";
 import { ConnectionMetricsChart } from "@/features/metrics/components/connection-metrics-chart";
 import { ConnectionMetricsHistory } from "@/features/metrics/components/connection-metrics-history";
+import { useCollectConnectionMetrics } from "@/features/metrics/hooks/use-collect-connection-metrics";
+import { Button } from "@/components/ui/button";
 
 type ConnectionDetailsProps = Readonly<{
   connectionId: string;
 }>;
 
 export function ConnectionDetails({ connectionId }: ConnectionDetailsProps) {
+  const collectMutation = useCollectConnectionMetrics();
   const { data, isLoading, isError, error } =
     useDatabaseConnection(connectionId);
 
@@ -23,6 +26,7 @@ export function ConnectionDetails({ connectionId }: ConnectionDetailsProps) {
       <PageHeader
         title="Connection Details"
         description="View database connection information."
+        actions={<Button type="button" onClick={() => collectMutation.mutate(connectionId)} disabled={collectMutation.isPending}>{collectMutation.isPending ? "Coletando..." : "Coletar agora"}</Button>}
       />
 
       {isLoading ? (
